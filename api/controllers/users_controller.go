@@ -9,11 +9,18 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
 	"github.com/mahmudinashar/go/api/auth"
 	"github.com/mahmudinashar/go/api/models"
 	"github.com/mahmudinashar/go/api/responses"
 	"github.com/mahmudinashar/go/api/utils/formaterror"
 )
+
+type UpdateInputParam struct {
+	Nickname string `json:"nickname" form:"nickname" query:"nickname"`
+	Email    string `json:"email" form:"email" query:"email"`
+	Password string `json:"password" form:"password" query:"password"`
+}
 
 func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 
@@ -46,16 +53,16 @@ func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusCreated, userCreated)
 }
 
-func (server *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
+func (server *Server) GetUsers(c echo.Context) error {
 
 	user := models.User{}
 
 	users, err := user.FindAllUsers(server.DB)
 	if err != nil {
-		responses.ERROR(w, http.StatusInternalServerError, err)
-		return
+		return c.JSON(http.StatusInternalServerError, err)
 	}
-	responses.JSON(w, http.StatusOK, users)
+
+	return c.JSON(http.StatusOK, users)
 }
 
 func (server *Server) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -75,47 +82,44 @@ func (server *Server) GetUser(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, userGotten)
 }
 
-func (server *Server) UpdateUser(w http.ResponseWriter, r *http.Request) {
+func (server *Server) UpdateUser(c echo.Context) error {
+	// bearerToken := c.Request().Header.Get("Authorization")
+	r := c.Request()
+	body := new(UpdateInputParam)
+	err := c.Bind(body)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 
-	vars := mux.Vars(r)
-	uid, err := strconv.ParseUint(vars["id"], 10, 32)
+	b, err := json.Marshal(body)
 	if err != nil {
-		responses.ERROR(w, http.StatusBadRequest, err)
-		return
+		return c.JSON(http.StatusUnprocessableEntity, err)
 	}
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
-		return
-	}
+
 	user := models.User{}
-	err = json.Unmarshal(body, &user)
+	err = json.Unmarshal(b, &user)
 	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
-		return
+		return c.JSON(http.StatusUnprocessableEntity, err)
 	}
-	tokenID, err := auth.ExtractTokenID(r)
+
+	uid, err := auth.ExtractTokenID(r)
 	if err != nil {
-		responses.ERROR(w, http.StatusUnauthorized, errors.New("Unauthorized"))
-		return
+		return c.JSON(http.StatusUnauthorized, err)
 	}
-	if tokenID != uint32(uid) {
-		responses.ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
-		return
-	}
+
 	user.Prepare()
 	err = user.Validate("update")
 	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
-		return
+		return c.JSON(http.StatusUnprocessableEntity, err)
 	}
+
 	updatedUser, err := user.UpdateAUser(server.DB, uint32(uid))
 	if err != nil {
 		formattedError := formaterror.FormatError(err.Error())
-		responses.ERROR(w, http.StatusInternalServerError, formattedError)
-		return
+		return c.JSON(http.StatusInternalServerError, formattedError)
 	}
-	responses.JSON(w, http.StatusOK, updatedUser)
+
+	return c.JSON(http.StatusOK, updatedUser)
 }
 
 func (server *Server) DeleteUser(w http.ResponseWriter, r *http.Request) {

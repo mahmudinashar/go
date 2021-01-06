@@ -17,8 +17,8 @@ func CreateToken(user_id uint32) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["user_id"] = user_id
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()       //Token expires after 1 hour
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims) // see .env - Getenv("API_SECRET_METHOD")
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
 
 }
@@ -46,6 +46,7 @@ func ExtractToken(r *http.Request) string {
 	if token != "" {
 		return token
 	}
+
 	bearerToken := r.Header.Get("Authorization")
 	if len(strings.Split(bearerToken, " ")) == 2 {
 		return strings.Split(bearerToken, " ")[1]
@@ -54,8 +55,8 @@ func ExtractToken(r *http.Request) string {
 }
 
 func ExtractTokenID(r *http.Request) (uint32, error) {
-
 	tokenString := ExtractToken(r)
+	fmt.Println(tokenString)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])

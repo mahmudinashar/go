@@ -3,10 +3,9 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/mahmudinashar/go/api/responses"
+	"github.com/labstack/echo/v4"
 )
 
-func (server *Server) Home(w http.ResponseWriter, r *http.Request) {
-	responses.JSON(w, http.StatusOK, "Welcome To This Awesome API")
-
+func (server *Server) Home(c echo.Context) error {
+	return c.JSON(http.StatusOK, "Hello, GoRest v01!")
 }
