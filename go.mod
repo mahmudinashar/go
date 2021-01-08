@@ -5,7 +5,6 @@ go 1.15
 require (
 	github.com/badoux/checkmail v1.2.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
 	github.com/labstack/echo v3.3.10+incompatible
@@ -18,4 +17,5 @@ require (
 	golang.org/x/sys v0.0.0-20210104204734-6f8348627aad // indirect
 	golang.org/x/text v0.3.4 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1
+	gorm.io/gorm v1.20.9
 )

@@ -53,7 +53,7 @@ func (server *Server) Login(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, formattedError)
 	}
 
-	output.Email = user.Email[0:3] + ` **** ` + user.Email[len(user.Email)-6:]
+	output.Email = user.Email[0:3] + ` **** ` + user.Email[len(user.Email)-5:]
 	output.Token = token
 	return c.JSON(http.StatusOK, output)
 }
