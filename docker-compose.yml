@@ -9,8 +9,8 @@ services:
     volumes:
       - api:/usr/src/app/
     depends_on:
-      - postgres # This service depends on postgres. Start that first.
-      # - mysql # This service depends on mysql. Start that first.
+      # - postgres # This service depends on postgres. Start that first.
+      - mysql # This service depends on mysql. Start that first.
     networks:
       - fullstack
 
