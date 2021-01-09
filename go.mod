@@ -19,5 +19,4 @@ require (
 	golang.org/x/sys v0.0.0-20210104204734-6f8348627aad // indirect
 	golang.org/x/text v0.3.4 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1
-	gorm.io/gorm v1.20.9
 )
