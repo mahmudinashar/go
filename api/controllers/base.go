@@ -5,12 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/labstack/echo/v4"
-	"github.com/mahmudinashar/go/graph"
-	"github.com/mahmudinashar/go/graph/generated"
 )
 
 type Server struct {
@@ -32,10 +29,17 @@ func Initialize() *Server {
 		}
 
 		database = db
+
+		//  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//   uncomment `seed.Load` bellow, when you are running this app for the first time.
+		//   this script is use for import database schema+data into target database (MySQL,
+		//   Postgres, SQLLite) or other database that support by GORM (gorm.io/gorm)
+		//  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 		// seed.Load(db)
 
 	} else {
-		fmt.Println("System only allow MySQL database driver, contant mahmudinashar@yahoo.co.id")
+		fmt.Println("System only allow MySQL database driver")
 	}
 
 	return &Server{
@@ -45,21 +49,5 @@ func Initialize() *Server {
 }
 
 func (server *Server) Start(addr string) error {
-
-	//  ------------------------------------------------
-	//      { only GRAPHQL ROUTES will process here }
-	//  ------------------------------------------------
-
-	graphqlHandler := handler.NewDefaultServer(
-		generated.NewExecutableSchema(
-			generated.Config{Resolvers: &graph.Resolver{DB: server.DB}},
-		),
-	)
-
-	server.Router.POST("/graphql", func(c echo.Context) error {
-		graphqlHandler.ServeHTTP(c.Response(), c.Request())
-		return nil
-	})
-
 	return server.Router.Start(":" + addr)
 }

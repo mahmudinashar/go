@@ -26,7 +26,7 @@ func Run() {
 	}
 
 	app := controllers.Initialize()
-	routes.InitializeRoutes(app)
+	routes.Routing(app)
 
 	err = app.Start(os.Getenv("SYS_PORT"))
 
