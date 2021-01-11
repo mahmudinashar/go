@@ -37,13 +37,16 @@ func (r *mutationResolver) InputUsers(ctx context.Context, input model.UserCreat
 
 func (r *queryResolver) Users(ctx context.Context, nickname *string, email *string, role *int) ([]*model.Users, error) {
 	users := []*model.Users{}
+
+	var params []interface{}
 	var baseQuery string
 	var inputQuery, firstQuery bool = false, true
 
 	if nickname != nil {
-		nicknameQuery := fmt.Sprintf("nickname LIKE '%s'", *nickname)
+		params = append(params, *nickname)
+		nicknameQuery := fmt.Sprintf("nickname = ?")
 		if strings.Contains(*nickname, "%") {
-			nicknameQuery = fmt.Sprintf("nickname LIKE '%s'", *nickname)
+			nicknameQuery = fmt.Sprintf("nickname LIKE ?")
 		}
 
 		if firstQuery {
@@ -58,9 +61,10 @@ func (r *queryResolver) Users(ctx context.Context, nickname *string, email *stri
 	}
 
 	if email != nil {
-		emailQuery := fmt.Sprintf("email = '%s'", *email)
+		params = append(params, *email)
+		emailQuery := fmt.Sprintf("email = ?")
 		if strings.Contains(*nickname, "%") {
-			emailQuery = fmt.Sprintf("email LIKE '%s'", *email)
+			emailQuery = fmt.Sprintf("email LIKE ?")
 		}
 
 		if firstQuery {
@@ -75,8 +79,8 @@ func (r *queryResolver) Users(ctx context.Context, nickname *string, email *stri
 	}
 
 	if role != nil {
-		roleQuery := fmt.Sprintf("role = '%d'", *role)
-
+		params = append(params, *role)
+		roleQuery := fmt.Sprintf("role = ?")
 		if firstQuery {
 			baseQuery = roleQuery
 
@@ -89,10 +93,9 @@ func (r *queryResolver) Users(ctx context.Context, nickname *string, email *stri
 	}
 
 	if inputQuery {
-		r.DB.Debug().Where(baseQuery).Find(&users)
-
+		r.DB.Where(baseQuery, params...).Find(&users)
 	} else {
-		r.DB.Debug().Find(&users)
+		r.DB.Find(&users)
 	}
 
 	return users, nil
