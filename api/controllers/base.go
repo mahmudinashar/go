@@ -30,11 +30,11 @@ func Initialize() *Server {
 
 		database = db
 
-		//  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		//   uncomment `seed.Load` bellow, when you are running this app for the first time.
+		//  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//   comment `seed.Load` bellow, when you are running this app for the second time or more.
 		//   this script is use for import database schema+data into target database (MySQL,
 		//   Postgres, SQLLite) or other database that support by GORM (gorm.io/gorm)
-		//  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 		// seed.Load(db)
 
