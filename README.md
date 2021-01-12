@@ -1,2 +1,2 @@
-# Golang-Echo-GORM-ResstFull-GraphQL
-This is an application built with golang, jwt, gorm, postgresql, mysql.
+# Golang API using GraphQL and RestFull API
+Before we start, some of this code is a refactory version from https://github.com/victorsteven/Go-JWT-Postgres-Mysql-Restful-API, thanks for sharing a great work!
