@@ -4,7 +4,7 @@ FROM golang:alpine as builder
 # ENV GO111MODULE=on
 
 # Add Maintainer info
-LABEL maintainer="Steven Victor <chikodi543@gmail.com>"
+LABEL maintainer="mahmudinashar@yahoo.co.id"
 
 # Install git.
 # Git is required for fetching the dependencies.
@@ -19,7 +19,7 @@ COPY go.mod go.sum ./
 # RUN go mod tidy
 
 # Download all dependencies. Dependencies will be cached if the go.mod and the go.sum files are not changed 
-RUN go mod download 
+RUN go mod download
 
 # Copy the source from the current directory to the working Directory inside the container 
 
@@ -36,6 +36,7 @@ WORKDIR /root/
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
 COPY --from=builder /app/.env .
+COPY --from=builder /app/assets ./assets  
 
 # Expose port 8080 to the outside world
 EXPOSE 8080

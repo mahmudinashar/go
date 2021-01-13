@@ -8,6 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/labstack/echo/v4"
+	"github.com/mahmudinashar/go/api/seed"
 )
 
 type Server struct {
@@ -36,7 +37,7 @@ func Initialize() *Server {
 		//   Postgres, SQLLite) or other database that support by GORM (gorm.io/gorm)
 		//  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-		// seed.Load(db)
+		seed.Load(db)
 
 	} else {
 		fmt.Println("System only allow MySQL database driver")
